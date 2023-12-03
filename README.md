@@ -1,6 +1,6 @@
 # mips64chain
 
-This script automatically sets up a GNU toolchain targeted towards mips64 systems in Apple Sillicon Macs, particularly the N64. This script is meant to be used with M64, but can be used elsewhere.
+This script automatically sets up a GNU toolchain targeted towards mips64 systems in Apple Sillicon Macs, specifically for N64 source compilation. This script is meant to be used with M64, but can be used elsewhere.
 
 ### Components and versions
 
