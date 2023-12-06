@@ -1,5 +1,14 @@
 #! /bin/bash
 
+#####################################################################
+#                                                                   #
+#               🍎.MIPS64CHAIN - INSTALLATION SCRIPT                #
+#                              by izu                               #
+#                                                                   #
+#           based on libdragon/tools/build-toolchain.sh             #
+#                                                                   #
+#####################################################################
+
 # set the unnoficial strict mode in bash
 set -euo pipefail
 IFS=$'\n\t'
@@ -106,6 +115,8 @@ function Prepare ()
     mkdir -p "$BUILD_PATH"
     cd "$BUILD_PATH"
 
+    echo -e "\n⬇️ ${GREEN} Now downloading and unpacking BINUTILS, GCC and NEWLIB.${RESET}\n"
+
     # Dependency downloads and unpack
     test -f "binutils-$BINUTILS_V.tar.gz" || wget -c "https://ftp.gnu.org/gnu/binutils/binutils-$BINUTILS_V.tar.gz"
     test -d "binutils-$BINUTILS_V"        || tar -xzf "binutils-$BINUTILS_V.tar.gz"
@@ -171,13 +182,8 @@ function CompBinutils ()
     popd
 }
 
-function Compile ()
+function PrepGCC ()
 {
-    echo -e "📦 ${PURPLE}Preparing BINUTILS for compilation, this will take some time. You may need to type your sudo password in a moment.${RESET}"
-    PrepBinutils > /dev/null 2>&1
-    echo -e "${GREEN}Now compiling BINUTILS...${RESET}"
-    CompBinutils
-
     # Compile GCC for MIPS MIPS64.
     # We need to build the C++ compiler to build the target libstd++ later.
     mkdir -p gcc_compile_target
@@ -199,12 +205,18 @@ function Compile ()
         --disable-nls \
         --disable-werror \
         --with-system-zlib
+}
+function CompGCC ()
+{
     make all-gcc -j "$JOBS"
     make install-gcc || sudo make install-gcc || su -c "make install-gcc"
     make all-target-libgcc -j "$JOBS"
     make install-target-libgcc || sudo make install-target-libgcc || su -c "make install-target-libgcc"
     popd
+}
 
+function PrepNewlib ()
+{
     # Compile newlib for target.
     mkdir -p newlib_compile_target
     pushd newlib_compile_target
@@ -215,10 +227,16 @@ function Compile ()
         --disable-threads \
         --disable-libssp \
         --disable-werror
+}
+function CompNewlib ()
+{
     make -j "$JOBS"
     make install || sudo env PATH="$PATH" make install || su -c "env PATH=\"$PATH\" make install"
     popd
+}
 
+function CompTLibs ()
+{
     # For a standard cross-compiler, the only thing left is to finish compiling the target libraries
     # like libstd++. We can continue on the previous GCC build target.
     if [ "$MIPS64_BUILD" == "$MIPS64_HOST" ]; then
@@ -229,12 +247,34 @@ function Compile ()
     fi
 }
 
+function Compile ()
+{
+    echo -e "\n📦 ${PURPLE}Preparing Binutils for compilation. This will only take a moment.${RESET}"
+    PrepBinutils > /dev/null 2>&1
+    echo -e "${GREEN}Now compiling and installing Binutils This may take some time. \n${YELLOW}You may need to enter your sudo password in a moment.${RESET}"
+    CompBinutils > /dev/null 2>&1
+
+    echo -e "\n📦 ${PURPLE}Preparing GCC for compilation. This may take some time.${RESET}"
+    PrepGCC > /dev/null 2>&1
+    echo -e "${GREEN}Now compiling and installing GCC. This will take a significant amount of time."
+    CompGCC > /dev/null 2>&1
+
+    echo -e "\n📦 ${PURPLE}Preparing Newlib for compilation. This will only take a moment.${RESET}"
+    PrepBinutils > /dev/null 2>&1
+    echo -e "${GREEN}Now compiling and installing Newlib. This may take some time.${RESET}"
+    CompBinutils > /dev/null 2>&1
+
+    echo -e "\n${GREEN}Finishing compiling target libraries.${GREEN}"
+    CompTLibs > /dev/null 2>&1
+}
+
 function main ()
 {
     Prepare 
     Compile
     echo
-    echo "done. you can remove the build directory now"
+    echo -e "\n${BLUE}🍎.mips64chain was successfully compiled and installed in your system. Enjoy!${RESET}"
+    echo    "You may remove the build directory now. You don't need it anymore."
 }
 
 main
