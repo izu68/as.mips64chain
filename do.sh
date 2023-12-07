@@ -13,7 +13,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-CHAIN_PATH=/opt/M64/mips64chain
+CHAIN_PATH=/opt/mips64chain
 
 # toolchain build path
 BUILD_PATH="${BUILD_PATH:-build}"
@@ -153,11 +153,6 @@ function Prepare ()
         # Instead, the HOST->TARGET cross-compiler can be installed into the final installation path
         CANADIAN_PREFIX=$INSTALL_PATH
 
-        # We need to build a canadian toolchain.
-        # First we need a host compiler, that is binutils+gcc targeting the host. For instance,
-        # when building a Libdragon Windows toolchain from Linux, this would be x86_64-w64-ming32,
-        # that is, a compiler that we run that generates Windows executables.
-        # Check if a host compiler is available. If so, we can just skip this step.
         if IsInstalled "$MIPS64_HOST"-gcc; then
             echo Found host compiler: "$MIPS64_HOST"-gcc in PATH. Using it.
         fi

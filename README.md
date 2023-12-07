@@ -1,6 +1,6 @@
 # 🍎.mips64chain
 
-This script automatically sets up a GNU toolchain targeted towards mips64 systems in Apple Silicon Macs, specifically for N64 source compilation. This script is meant to be used with M64, but can be used elsewhere.
+This script automatically sets up a GNU toolchain targeted towards mips64 systems in Apple Silicon Macs, specifically for N64 source compilation.
 
 ### Components and versions
 
@@ -16,9 +16,3 @@ This script automatically sets up a GNU toolchain targeted towards mips64 system
 ### Dependencies
 
 - brew
-
-### Credit
-
-This script is based on libdragon's toolchain installation script, a few changes have been made, like removing redundancy when checking for darwin since this script is intended to be ran on Macs.
-
-Huge props to them for everything they're doing and big shoutouts to the N64brew community for their giant efforts 👏🏼
