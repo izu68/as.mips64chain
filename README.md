@@ -1,4 +1,4 @@
-# 🍎.mips64chain
+# 🍎.mips64chain 1.0
 
 This script automatically sets up a GNU toolchain targeted towards mips64 systems in Apple Silicon Macs, specifically for N64 source compilation.
 

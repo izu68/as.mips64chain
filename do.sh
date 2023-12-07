@@ -7,6 +7,8 @@
 #                                                                   #
 #           based on libdragon/tools/build-toolchain.sh             #
 #                                                                   #
+#                               v1.0                                #
+#                                                                   #
 #####################################################################
 
 # set the unnoficial strict mode in bash
